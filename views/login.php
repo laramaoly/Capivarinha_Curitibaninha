@@ -39,7 +39,7 @@ require 'includes/header.php';
         <!-- Logotipo / Mascote -->
         <div style="text-align: center; margin-bottom: 20px;">
             <img src="assets/img/char-capivara-happy.png" style="width: 140px; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.1));" alt="Capivariña">
-            <h2 style="color: #2E7D32; margin-top: 10px; font-size: 1.8rem;">Capi-Typer</h2>
+            <h2 style="color: #2E7D32; margin-top: 10px; font-size: 1.8rem;">Capivarinha</h2>
             <p style="color: #666;">O Desafio Curitibaninha Raiz</p>
         </div>
 

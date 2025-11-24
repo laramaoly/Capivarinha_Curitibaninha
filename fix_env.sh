@@ -43,6 +43,12 @@ DB_USER=admin
 DB_PASS=admin
 EOF
 
+# Pequena pausa para o usuário apreciar o progresso (defina NO_PAUSE=1 para pular)
+if [ "${NO_PAUSE:-0}" != "1" ]; then
+  echo "Aguardando 2 segundos para que você veja o progresso..."
+  sleep 2
+fi
+
 echo "✅ Pronto! Execute para iniciar o servidor:"
 echo "   php -S 0.0.0.0:8000"
 echo "   Acesse: http://127.0.0.1:8000"

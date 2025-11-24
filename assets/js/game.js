@@ -61,11 +61,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function saveScore() {
         try {
-            await fetch('api/save_score.php', {
+            const resp = await fetch('api/save_score.php', {
                 method: 'POST',
+                credentials: 'same-origin', // garante envio de cookies/sessão
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ pontos: score, acertos: acertos })
             });
+
+            // Log de erro caso a API responda com falha (útil para debug)
+            if (!resp.ok) {
+                const json = await resp.json().catch(() => null);
+                console.error('Falha ao salvar pontuação:', resp.status, json);
+                // Mostrar feedback ao usuário se a sessão expirou ou houve erro
+                if (json && json.message) showFeedback(json.message, 'red');
+                else showFeedback('Não foi possível salvar sua pontuação.', 'red');
+            } else {
+                const json = await resp.json().catch(() => null);
+                console.log('saveScore response:', json);
+                // Mostrar mensagem curta de sucesso (silencioso)
+                if (json && json.status === 'success') {
+                    showFeedback('Pontuação salva!', 'green');
+                }
+            }
         } catch (error) {
             console.error("Erro ao salvar pontuação:", error);
         }

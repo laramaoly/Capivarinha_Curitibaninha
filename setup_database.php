@@ -8,6 +8,14 @@ try {
     $pdo = new PDO("mysql:host=127.0.0.1;port=3306", "root", "");
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     echo "✅ Conexión con MariaDB exitosa.<br>";
+    // Si se ejecuta desde la CLI, pedir al usuario que presione ENTER para avanzar;
+    // en entorno web damos un pequeño delay para que el usuario vea el mensaje.
+    if (php_sapi_name() === 'cli' && getenv('NO_PAUSE') !== '1') {
+        echo "Presiona ENTER para continuar...\n";
+        fgets(STDIN);
+    } else {
+        @ob_flush(); @flush(); sleep(1);
+    }
 } catch (PDOException $e) {
     die("❌ Error conectando a MariaDB: " . $e->getMessage() . "<br>Asegúrate de haber ejecutado 'bash fix_env.sh' primero.");
 }
@@ -88,9 +96,23 @@ try {
 
     foreach ($queries as $query) {
         $pdo->exec($query);
+        // Pausa breve entre queries para suavizar la ejecución
+        if (php_sapi_name() === 'cli' && getenv('NO_PAUSE') !== '1') {
+            usleep(200000); // 200ms
+        } else {
+            @ob_flush(); @flush(); usleep(200000);
+        }
     }
     
     echo "✅ Tablas creadas y datos insertados.<br>";
+    // Pausa final corta antes de mostrar el link
+    if (php_sapi_name() === 'cli' && getenv('NO_PAUSE') !== '1') {
+        echo "Presiona ENTER para finalizar...\n";
+        fgets(STDIN);
+    } else {
+        @ob_flush(); @flush(); sleep(1);
+    }
+
     echo "<h2>🎉 ¡TODO LISTO! <a href='index.php'>Haz clic aquí para ir al juego</a></h2>";
 
 } catch (PDOException $e) {

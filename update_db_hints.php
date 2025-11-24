@@ -62,6 +62,10 @@ $updates = [
 foreach ($updates as $termo => $dica) {
     $stmt = $pdo->prepare("UPDATE termos_jogo SET dica = ? WHERE termo = ?");
     $stmt->execute([$dica, $termo]);
+    // pequena pausa para não atualizar tudo instantaneamente (melhora a percepção)
+    if (php_sapi_name() === 'cli' && getenv('NO_PAUSE') !== '1') {
+        usleep(150000); // 150ms
+    }
 }
 
 echo "✅ Banco atualizado com sucesso! Agora as palavras têm dicas.";
