@@ -8,8 +8,8 @@
 // Configurações do ambiente (XAMPP/Localhost)
 $host = 'localhost';
 $db   = 'capityper';
-$user = 'admin';     // Utilizador padrão do XAMPP (geralmente 'root')
-$pass = 'admin';         // Palavra-passe padrão do XAMPP (geralmente vazia)
+$user = 'root';     // Utilizador padrão do XAMPP (geralmente 'root')
+$pass = '';         // Palavra-passe padrão do XAMPP (geralmente vazia)
 $charset = 'utf8mb4';
 
 // Data Source Name (DSN)
