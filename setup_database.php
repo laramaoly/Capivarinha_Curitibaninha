@@ -4,7 +4,8 @@ echo "<h1>Inicializando Capi-Typer DB... 🧉</h1>";
 
 // 1. Conectar como ROOT (sin contraseña en Codespaces)
 try {
-    $pdo = new PDO("mysql:host=localhost", "root", "");
+    // Forzar conexión TCP para evitar uso de socket UNIX (permission denied en algunos containers)
+    $pdo = new PDO("mysql:host=127.0.0.1;port=3306", "root", "");
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     echo "✅ Conexión con MariaDB exitosa.<br>";
 } catch (PDOException $e) {
@@ -13,9 +14,10 @@ try {
 
 // 2. Crear Usuario 'admin' y Base de Datos
 try {
-    // Crear usuario admin si no existe
-    $pdo->exec("CREATE USER IF NOT EXISTS 'admin'@'localhost' IDENTIFIED BY 'admin';");
-    $pdo->exec("GRANT ALL PRIVILEGES ON *.* TO 'admin'@'localhost';");
+    // Crear usuario admin si no existe (permitir conexiones TCP desde este host)
+    // Usamos '%' como host en dev para evitar problemas de matching entre 'localhost' (socket) y '127.0.0.1' (TCP)
+    $pdo->exec("CREATE USER IF NOT EXISTS 'admin'@'%' IDENTIFIED BY 'admin';");
+    $pdo->exec("GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%' WITH GRANT OPTION;");
     $pdo->exec("FLUSH PRIVILEGES;");
     echo "✅ Usuario 'admin' creado/verificado.<br>";
 

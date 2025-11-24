@@ -5,37 +5,36 @@
  * Autor: Maoly Lara Serrano
  */
 
+
+/**
+ * Capivarinha_Curitibaninha - API de Palavras com Dicas
+ * Retorna objetos {termo, dica} ordenados por dificuldade
+ */
+
 header('Content-Type: application/json');
 require_once '../config/database.php';
 
 try {
-    // Busca 15 palavras aleatórias misturando níveis de dificuldade
-    // 5 Fáceis + 5 Médias + 5 Difíceis
-    $query = "(SELECT termo FROM termos_jogo WHERE dificuldade='facil' ORDER BY RAND() LIMIT 5)
-              UNION
-              (SELECT termo FROM termos_jogo WHERE dificuldade='medio' ORDER BY RAND() LIMIT 5)
-              UNION
-              (SELECT termo FROM termos_jogo WHERE dificuldade='dificil' ORDER BY RAND() LIMIT 5)";
-    
-    $stmt = $pdo->query($query);
-    
-    // FETCH_COLUMN retorna um array simples de strings ["Vina", "Piá", ...]
-    // em vez de um array de objetos [{"termo": "Vina"}, ...]
-    $palavras = $stmt->fetchAll(PDO::FETCH_COLUMN);
-    
-    if (empty($palavras)) {
-        // Fallback caso o banco esteja vazio (para não quebrar o jogo)
-        $palavras = ['Vina', 'Piá', 'Capivara', 'Guria', 'Chima'];
-    } else {
-        // Embaralha o resultado final para que a dificuldade não seja linear
-        shuffle($palavras);
+    // Função auxiliar para buscar por dificuldade
+    function getWords($pdo, $dificuldade) {
+        $sql = "SELECT termo, dica FROM termos_jogo WHERE dificuldade = ? ORDER BY RAND() LIMIT 5";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$dificuldade]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    $facil = getWords($pdo, 'facil');
+    $medio = getWords($pdo, 'medio');
+    $dificil = getWords($pdo, 'dificil');
+
+    // Junta tudo (Dificil primeiro no array para sair por último no .pop())
+    // Ordem de saída no jogo: Fácil -> Médio -> Difícil
+    $deck = array_merge($dificil, $medio, $facil);
     
-    echo json_encode($palavras);
+    echo json_encode($deck);
 
 } catch (PDOException $e) {
-    // Retorna erro JSON em caso de falha no banco
     http_response_code(500);
-    echo json_encode(['error' => 'Erro ao buscar palavras: ' . $e->getMessage()]);
+    echo json_encode(['error' => 'Erro: ' . $e->getMessage()]);
 }
 ?>

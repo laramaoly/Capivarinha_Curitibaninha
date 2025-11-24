@@ -119,20 +119,23 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Pega a próxima palavra e atualiza UI
         currentWordObj = wordsQueue.pop();
-        
         // Animação de "Pop" na palavra
         wordDisplay.classList.remove('word-pop');
-        void wordDisplay.offsetWidth; // Força o reflow para reiniciar animação
+        void wordDisplay.offsetWidth;
         wordDisplay.classList.add('word-pop');
-        
-        wordDisplay.innerText = currentWordObj;
+        // Mostra a dica se existir, senão mostra a palavra
+        if (typeof currentWordObj === 'object' && currentWordObj.dica) {
+            wordDisplay.innerText = currentWordObj.dica;
+        } else if (typeof currentWordObj === 'object' && currentWordObj.termo) {
+            wordDisplay.innerText = currentWordObj.termo;
+        } else {
+            wordDisplay.innerText = currentWordObj;
+        }
+        // Debug opcional
+        console.log("Dica:", currentWordObj.dica, "| Resposta:", currentWordObj.termo);
         inputField.value = '';
-        
-        // Mascote volta ao normal
         mascot.src = IMG_HAPPY;
         mascot.classList.remove('mascot-jump');
-        
-        // Reset do Timer
         resetTimer();
     }
 
@@ -221,7 +224,18 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!gameActive) return;
 
         const typed = normalize(inputField.value);
-        const target = normalize(currentWordObj);
+        // Compatibilidade: busca 'termo' se existir, senão usa string direta
+        const targetWord = (typeof currentWordObj === 'object' && currentWordObj.termo) ? currentWordObj.termo : currentWordObj;
+        const target = normalize(targetWord);
+
+        // Feedback visual instantâneo de erro
+        if (!target.startsWith(typed)) {
+            mascot.src = IMG_SAD;
+            inputField.classList.add('wrong');
+        } else {
+            mascot.src = IMG_HAPPY;
+            inputField.classList.remove('wrong');
+        }
 
         // Verifica se completou a palavra
         if (typed === target) {

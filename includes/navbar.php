@@ -39,7 +39,7 @@ $currentPage = isset($_GET['page']) ? $_GET['page'] : 'game';
     <!-- Botão SAIR (Logout) -->
     <!-- Nota: A confirmação de saída é tratada pelo main.js -->
     <div class="nav-item" onclick="window.location.href='logout.php'" title="Sair do Sistema">
-        <img src="assets/img/icons/Guarda-chuva _Petit-Pave.png" alt="Sair">
+        <img src="assets/img/icons/Guarda-chuva_Petit-Pave.png" alt="Sair">
         <small>Sair</small>
     </div>
     

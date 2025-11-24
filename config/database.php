@@ -6,13 +6,13 @@
  */
 
 // Configurações para o Codespaces (conforme criamos no terminal)
-$host = 'localhost';
+$host = '127.0.0.1';
 $db   = 'capityper';
 $user = 'admin';     // Mudamos de 'root' para 'admin'
 $pass = 'admin';     // Senha 'admin' que definimos no SQL
 $charset = 'utf8mb4';
 
-$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
+$dsn = "mysql:host=$host;port=3306;dbname=$db;charset=$charset";
 
 $options = [
     PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,

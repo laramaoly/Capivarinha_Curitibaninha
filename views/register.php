@@ -55,7 +55,7 @@ require 'includes/header.php';
         
         <!-- Cabeçalho Simples -->
         <div style="text-align: center; margin-bottom: 15px;">
-            <img src="assets/img/icons/gralha_azul.png" style="width: 60px;" alt="Gralha Azul">
+            <img src="assets/img/icons/Gralha_Azul.png" style="width: 60px;" alt="Gralha Azul">
             <h2 style="color: #0277BD; margin-top: 5px; font-size: 1.5rem;">Criar Conta</h2>
             <p style="color: #666; font-size: 0.9rem;">Venha fazer parte da piazada!</p>
         </div>
