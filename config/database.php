@@ -5,30 +5,26 @@
  * Autor: Maoly Lara Serrano
  */
 
-// Configurações do ambiente (XAMPP/Localhost)
+// Configurações para o Codespaces (conforme criamos no terminal)
 $host = 'localhost';
 $db   = 'capityper';
-$user = 'root';     // Utilizador padrão do XAMPP (geralmente 'root')
-$pass = '';         // Palavra-passe padrão do XAMPP (geralmente vazia)
+$user = 'admin';     // Mudamos de 'root' para 'admin'
+$pass = 'admin';     // Senha 'admin' que definimos no SQL
 $charset = 'utf8mb4';
 
-// Data Source Name (DSN)
 $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
 
-// Opções do PDO para segurança e facilidade de debug
 $options = [
-    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION, // Lança exceções em caso de erro
-    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,      // Retorna arrays associativos por padrão
-    PDO::ATTR_EMULATE_PREPARES   => false,                 // Usa prepared statements reais do MySQL
-    PDO::ATTR_PERSISTENT         => true                   // Conexões persistentes (opcional, melhora performance)
+    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    PDO::ATTR_EMULATE_PREPARES   => false,
+    PDO::ATTR_PERSISTENT         => true
 ];
 
 try {
-    // Cria a instância da conexão
     $pdo = new PDO($dsn, $user, $pass, $options);
 } catch (\PDOException $e) {
-    // Em caso de erro fatal na conexão
-    // Em produção, não deves mostrar $e->getMessage() diretamente ao utilizador
+    // Se der erro de driver, a mensagem será clara
     throw new \PDOException($e->getMessage(), (int)$e->getCode());
 }
 ?>
