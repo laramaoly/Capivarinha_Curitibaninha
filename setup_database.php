@@ -71,19 +71,19 @@ try {
         "CREATE TABLE termos_jogo (
             id INT AUTO_INCREMENT PRIMARY KEY,
             termo VARCHAR(255) NOT NULL,
+            dica VARCHAR(255) DEFAULT NULL,
             dificuldade ENUM('facil', 'medio', 'dificil') DEFAULT 'medio'
         )",
-        "INSERT INTO termos_jogo (termo, dificuldade) VALUES 
-        ('Vina', 'facil'), ('Piá', 'facil'), ('Guria', 'facil'), 
-        ('Capi', 'facil'), ('Chima', 'facil'), ('Tube', 'facil'), 
-        ('Véi', 'facil'), ('Gela', 'facil'), ('Busão', 'facil'),
-        ('Capivara', 'medio'), ('Gurizão', 'medio'), ('Friaca', 'medio'), 
-        ('Faceiro', 'medio'), ('Sinaleiro', 'medio'), ('Penal', 'medio'), 
-        ('Doleira', 'medio'), ('Japona', 'medio'), ('Cancha', 'medio'),
-        ('Leite quente', 'dificil'), ('Pão com vina', 'dificil'), 
-        ('Chuva oblíqua', 'dificil'), ('Barigui lover', 'dificil'), 
-        ('Biarticulado', 'dificil'), ('Petit Pavê', 'dificil'),
-        ('Deus me livre', 'dificil'), ('Quem me dera', 'dificil')"
+        "INSERT INTO termos_jogo (termo, dica, dificuldade) VALUES 
+        ('Vina', 'Apelido curto usado localmente', 'facil'), ('Piá', 'Menino / Garoto', 'facil'), ('Guria', 'Menina / Garota', 'facil'), 
+        ('Capi', 'Diminutivo de capivara', 'facil'), ('Chima', 'Bebida quente típica (abreviada)', 'facil'), ('Tube', 'Estação de ônibus de vidro', 'facil'), 
+        ('Véi', 'Vocativo para amigo / Cara', 'facil'), ('Gela', 'Cerveja gelada', 'facil'), ('Busão', 'Ônibus', 'facil'),
+        ('Capivara', 'Animal símbolo da cidade', 'medio'), ('Gurizão', 'Rapaz grande / Adulto jovem', 'medio'), ('Friaca', 'Frio intenso', 'medio'), 
+        ('Faceiro', 'Muito feliz / Contente', 'medio'), ('Sinaleiro', 'Semáforo de trânsito', 'medio'), ('Penal', 'Estojo escolar', 'medio'), 
+        ('Doleira', 'Pochete usada por dentro da roupa', 'medio'), ('Japona', 'Jaqueta grossa de nylon', 'medio'), ('Cancha', 'Quadra de esportes', 'medio'),
+        ('Leite quente', 'Bebida, ou expressão idiomática', 'dificil'), ('Pão com vina', 'Como chamamos o Hot Dog', 'dificil'), ('Chuva oblíqua', 'Chuva com vento que molha tudo', 'dificil'), 
+        ('Barigui lover', 'Quem adora o parque mais famoso', 'dificil'), ('Biarticulado', 'Ônibus vermelho gigante', 'dificil'), ('Petit Pavê', 'Calçada de pedrinhas (mosaico)', 'dificil'),
+        ('Deus me livre', 'Expressão de negação enfática', 'dificil'), ('Quem me dera', 'Expressão de desejo intenso', 'dificil')"
     ];
 
     foreach ($queries as $query) {

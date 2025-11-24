@@ -27,6 +27,13 @@ sudo mysql -e "DROP DATABASE IF EXISTS capityper; CREATE DATABASE capityper CHAR
 # Importar schema
 sudo mysql -u admin -padmin capityper < "$SCRIPT_DIR/sql/database_setup.sql"
 
+# Atualizar dicas no banco (garante que a coluna exista e que as dicas estejam preenchidas)
+if command -v php8.3 >/dev/null 2>&1; then
+  php8.3 "$SCRIPT_DIR/update_db_hints.php" > /dev/null 2>&1 || true
+else
+  php "$SCRIPT_DIR/update_db_hints.php" > /dev/null 2>&1 || true
+fi
+
 # Criar arquivo .env
 cat > "$SCRIPT_DIR/.env" <<EOF
 DB_HOST=127.0.0.1

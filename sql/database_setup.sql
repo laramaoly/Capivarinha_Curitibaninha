@@ -54,40 +54,41 @@ CREATE TABLE partidas (
 CREATE TABLE termos_jogo (
     id INT AUTO_INCREMENT PRIMARY KEY,
     termo VARCHAR(255) NOT NULL,
+    dica VARCHAR(255) DEFAULT NULL,
     dificuldade ENUM('facil', 'medio', 'dificil') DEFAULT 'medio'
 );
 
 -- 7. Inserção de Dados Iniciais (Seed)
 -- Gírias e expressões típicas para o jogo começar funcional
-INSERT INTO termos_jogo (termo, dificuldade) VALUES 
+INSERT INTO termos_jogo (termo, dica, dificuldade) VALUES 
 -- Fáceis
-('Vina', 'facil'), 
-('Piá', 'facil'), 
-('Guria', 'facil'), 
-('Capi', 'facil'), 
-('Chima', 'facil'), 
-('Tube', 'facil'), 
-('Véi', 'facil'), 
-('Gela', 'facil'),
-('Busão', 'facil'),
+('Vina', 'Apelido curto usado localmente', 'facil'), 
+('Piá', 'Garoto, menino', 'facil'), 
+('Guria', 'Menina ou jovem mulher', 'facil'), 
+('Capi', 'Diminutivo de capivara', 'facil'), 
+('Chima', 'Gíria local para chimarrão', 'facil'), 
+('Tube', 'Onibus de linha', 'facil'), 
+('Véi', 'Forma coloquial de chamar alguém (véio)', 'facil'), 
+('Gela', 'Forma de dizer geladeira/gelo', 'facil'),
+('Busão', 'Ônibus', 'facil'),
 
 -- Médias
-('Capivara', 'medio'), 
-('Gurizão', 'medio'), 
-('Friaca', 'medio'), 
-('Faceiro', 'medio'),
-('Sinaleiro', 'medio'), 
-('Penal', 'medio'), 
-('Doleira', 'medio'), 
-('Japona', 'medio'),
-('Cancha', 'medio'),
+('Capivara', 'Animal símbolo da cidade', 'medio'), 
+('Gurizão', 'Versão aumentativa de gurizinho', 'medio'), 
+('Friaca', 'Frio intenso', 'medio'), 
+('Faceiro', 'Alegre, satisfeito', 'medio'),
+('Sinaleiro', 'Pessoa que usa muito os semáforos (brincadeira)', 'medio'), 
+('Penal', 'Termo local para punição ou jogo', 'medio'), 
+('Doleira', 'Gíria regional (carteira?)', 'medio'), 
+('Japona', 'Jaqueta grande', 'medio'),
+('Cancha', 'Quadra, espaço de jogo', 'medio'),
 
 -- Difíceis
-('Leite quente', 'dificil'), 
-('Pão com vina', 'dificil'), 
-('Chuva oblíqua', 'dificil'),
-('Barigui lover', 'dificil'), 
-('Biarticulado', 'dificil'), 
-('Petit Pavê', 'dificil'),
-('Deus me livre', 'dificil'),
-('Quem me dera', 'dificil');
+('Leite quente', 'Bebida, ou expressão idiomática', 'dificil'), 
+('Pão com vina', 'Lanche típico com vinho/linguiça (regional)', 'dificil'), 
+('Chuva oblíqua', 'Chuva inclinada devido ao vento', 'dificil'),
+('Barigui lover', 'Brincadeira com o nome do parque Barigui', 'dificil'), 
+('Biarticulado', 'Tipo de ônibus com duas articulações', 'dificil'), 
+('Petit Pavê', 'Trocadilho culinário ou nome inventado', 'dificil'),
+('Deus me livre', 'Expressão de surpresa/afirmação', 'dificil'),
+('Quem me dera', 'Expressão de desejo irreal', 'dificil');
