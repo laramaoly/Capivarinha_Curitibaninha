@@ -26,7 +26,7 @@ body, html {
    ========================================= */
 .background-container {
     /* O caminho volta uma pasta (../) para sair de 'css' e entrar em 'img' */
-    background: url('../img/background-curitiba.jpg') no-repeat center center fixed;
+    background: url('../img/background-curitiba.png') no-repeat center center fixed;
     background-size: cover;
     width: 100%;
     height: 100vh;
