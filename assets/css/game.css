@@ -1,0 +1,203 @@
+/* * Capivarinha_Curitibaninha - Estilos Específicos do Jogo
+ * Tema: Curitiba Raiz (Cartoon/Soft UI)
+ * Autor: Maoly Lara Serrano
+ */
+
+/* =========================================
+   1. Telas de Estado (Start, Game, End)
+   ========================================= */
+
+/* Oculta telas que não estão ativas */
+.screen-section {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Tela Inicial */
+#start-screen {
+    text-align: center;
+    padding: 20px;
+}
+
+#start-screen h2 {
+    font-size: 2rem;
+    color: #2E7D32;
+    margin-bottom: 10px;
+}
+
+#start-screen p {
+    color: #555;
+    margin-bottom: 25px;
+    font-size: 1.1rem;
+    line-height: 1.5;
+}
+
+/* Tela de Fim de Jogo */
+#end-screen {
+    text-align: center;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 20px;
+    padding: 20px;
+}
+
+#end-message {
+    font-size: 1.8rem;
+    color: #333;
+    margin: 15px 0;
+}
+
+#final-score {
+    font-size: 3rem;
+    font-weight: 800;
+    color: #FFC107; /* Amarelo Ipê */
+    text-shadow: 2px 2px 0px #8B4513; /* Sombra Pinhão */
+    margin-bottom: 20px;
+}
+
+/* =========================================
+   2. Elementos de Gameplay
+   ========================================= */
+
+/* Container do Timer */
+.timer-container {
+    width: 80%;
+    height: 12px;
+    background: #e0e0e0;
+    border-radius: 10px;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Barra de Progresso do Timer */
+#timer-bar {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #FFC107, #FF9800);
+    border-radius: 8px;
+    transition: width 0.1s linear, background 0.3s ease;
+}
+
+/* Modificadores de Cor do Timer */
+.timer-warning {
+    background: linear-gradient(90deg, #FF9800, #F44336) !important;
+}
+
+.timer-critical {
+    background: #D32F2F !important;
+    animation: pulseRed 0.5s infinite;
+}
+
+/* Feedback de Texto (Abaixo do Input) */
+#feedback-msg {
+    height: 20px;
+    margin-top: 15px;
+    font-weight: bold;
+    font-size: 1rem;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.show-feedback {
+    opacity: 1 !important;
+}
+
+/* =========================================
+   3. Botões Especiais (Estilo Sticker)
+   ========================================= */
+
+.btn-game {
+    background-color: #2E7D32;
+    color: white;
+    font-family: 'Varela Round', sans-serif;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border: none;
+    padding: 12px 40px;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 5px 0 #1B5E20, 0 10px 10px rgba(0,0,0,0.1);
+    transition: all 0.1s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: inline-block;
+}
+
+.btn-game:active {
+    transform: translateY(5px);
+    box-shadow: 0 0 0 #1B5E20;
+}
+
+.btn-restart {
+    background-color: #0288D1; /* Azul Ônibus */
+    box-shadow: 0 5px 0 #01579B, 0 10px 10px rgba(0,0,0,0.1);
+}
+
+.btn-restart:active {
+    box-shadow: 0 0 0 #01579B;
+}
+
+/* =========================================
+   4. Animações
+   ========================================= */
+
+/* Entrada suave das telas */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Palavra surgindo (Pop) */
+.word-pop {
+    animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn {
+    0% { transform: scale(0.5); opacity: 0; }
+    70% { transform: scale(1.2); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* Pulso Vermelho para Timer Crítico */
+@keyframes pulseRed {
+    0% { box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(244, 67, 54, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(244, 67, 54, 0); }
+}
+
+/* Confete (opcional, para vitória) */
+.confetti {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background-color: #FFC107;
+    animation: fall 3s linear forwards;
+}
+
+@keyframes fall {
+    to { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+/* Efeito de Dano (Tela pisca vermelho) */
+.screen-shake {
+    animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+    border-color: #F44336 !important; /* Borda do app fica vermelha */
+}
+
+@keyframes shake {
+  10%, 90% { transform: translate3d(-1px, 0, 0); }
+  20%, 80% { transform: translate3d(2px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+  40%, 60% { transform: translate3d(4px, 0, 0); }
+}

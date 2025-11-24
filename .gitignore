@@ -1,0 +1,35 @@
+Ficheiros de Sistema Operativo
+
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+Ficheiros de IDE / Editores de Texto
+
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+Dependências (caso venhas a usar Composer ou NPM no futuro)
+
+/vendor/
+/node_modules/
+
+Ficheiros de Configuração com Senhas (IMPORTANTE!)
+
+O Git não deve rastrear o ficheiro real com as tuas senhas do banco
+
+config/database.php
+
+Logs de erros do PHP
+
+error_log
+php_errors.log
+
+Ficheiros temporários
+
+*.tmp
+*.bak
+*.swp

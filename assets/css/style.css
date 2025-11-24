@@ -1,0 +1,318 @@
+/* * Capivarinha_Curitibaninha - Folha de Estilos Principal
+ * Tema: Curitiba Raiz (Cartoon/Soft UI)
+ * Autor: Maoly Lara Serrano
+ */
+
+/* =========================================
+   1. Importações e Reset
+   ========================================= */
+@import url('https://fonts.googleapis.com/css2?family=Varela+Round&display=swap');
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body, html {
+    height: 100%;
+    font-family: 'Varela Round', sans-serif; /* Fonte arredondada e fofa */
+    overflow: hidden; /* Evita barras de rolagem indesejadas */
+    background-color: #87CEEB; /* Fallback (azul céu) caso a imagem não carregue */
+}
+
+/* =========================================
+   2. Layout Principal (Fundo Panorâmico)
+   ========================================= */
+.background-container {
+    /* O caminho volta uma pasta (../) para sair de 'css' e entrar em 'img' */
+    background: url('../img/background-curitiba.jpg') no-repeat center center fixed;
+    background-size: cover;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center; /* Centraliza horizontalmente */
+    align-items: center;     /* Centraliza verticalmente */
+    position: relative;
+}
+
+/* =========================================
+   3. O "Celular" (Container do Jogo)
+   ========================================= */
+.app-frame {
+    background-color: rgba(245, 247, 250, 0.95); /* Branco gelo com leve transparência */
+    width: 100%;
+    max-width: 420px; /* Largura típica de smartphone */
+    height: 90vh;     /* Ocupa 90% da altura da tela */
+    border-radius: 35px; /* Cantos bem arredondados */
+    
+    /* Sombra profunda para dar destaque sobre o fundo */
+    box-shadow: 0 20px 50px rgba(0, 40, 20, 0.5); 
+    
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    border: 6px solid #FFFFFF; /* Borda branca grossa estilo 'sticker' */
+    overflow: hidden; /* O que passar do celular é cortado (exceto o mascote que trataremos depois) */
+}
+
+/* =========================================
+   4. Cabeçalho (HUD - Pontos e Vidas)
+   ========================================= */
+.game-header {
+    padding: 15px 20px;
+    background: linear-gradient(to bottom, #ffffff, #f0f0f0);
+    border-bottom: 2px solid #e0e0e0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 5;
+}
+
+/* As "Pílulas" de pontuação  */
+.currency-badge {
+    background: #FFFFFF;
+    border: 2px solid #4CAF50; /* Verde Curitiba */
+    border-radius: 50px;       /* Formato de pílula */
+    padding: 5px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 0 rgba(76, 175, 80, 0.2); /* Sombra sólida estilo 3D */
+    min-width: 80px;
+    transition: transform 0.1s;
+}
+
+.currency-badge:hover {
+    transform: translateY(2px); /* Efeito de clique */
+    box-shadow: 0 2px 0 rgba(76, 175, 80, 0.2);
+}
+
+.currency-badge img {
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
+    object-fit: contain;
+}
+
+.currency-badge span {
+    font-weight: 700;
+    color: #2C3E50;
+    font-size: 1.1rem;
+}
+
+/* =========================================
+   5. Área Central do Jogo (Canvas)
+   ========================================= */
+#game-canvas {
+    flex: 1; /* Ocupa todo o espaço restante */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centraliza o conteúdo (palavra/input) */
+    align-items: center;
+    text-align: center;
+    position: relative;
+    padding: 20px;
+    background: radial-gradient(circle at center, #ffffff 0%, #f1f8e9 100%); /* Gradiente sutil verde */
+}
+
+/* Palavra a ser digitada */
+.word-display {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #2E7D32; /* Verde Bandeira forte */
+    margin-bottom: 30px;
+    text-transform: uppercase;
+    text-shadow: 2px 2px 0px #FFFFFF, 4px 4px 0px rgba(0,0,0,0.1);
+    
+    /* Animação suave flutuando */
+    animation: float 3s ease-in-out infinite; 
+}
+
+/* Campo de Digitação */
+#typing-input {
+    font-family: 'Varela Round', sans-serif;
+    font-size: 1.4rem;
+    padding: 15px;
+    border-radius: 25px;
+    border: 3px solid #8B4513; /* Cor Pinhão */
+    background-color: #FFF;
+    width: 85%;
+    text-align: center;
+    outline: none;
+    color: #333;
+    transition: all 0.2s ease;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+}
+
+#typing-input:focus {
+    border-color: #2E7D32; /* Muda para verde ao focar */
+    box-shadow: 0 0 0 4px rgba(46, 125, 50, 0.2);
+    transform: scale(1.02);
+}
+
+#typing-input::placeholder {
+    color: #ccc;
+    font-size: 1rem;
+}
+
+/* Barra de Tempo */
+#timer-bar {
+    width: 80%;
+    height: 10px;
+    background: #e0e0e0;
+    border-radius: 10px;
+    margin-bottom: 25px;
+    overflow: hidden;
+    border: 1px solid #ccc;
+}
+
+#timer-fill {
+    height: 100%;
+    width: 100%;
+    background: #FFC107; /* Amarelo Ipê */
+    border-radius: 10px;
+    transition: width 0.1s linear, background 0.3s;
+}
+
+/* =========================================
+   6. Mascote (Capivariña)
+   ========================================= */
+.mascot-container {
+    position: absolute;
+    bottom: 70px; /* Acima do menu de navegação */
+    right: -30px; /* Saindo um pouco pra fora da tela (efeito 3D) */
+    width: 160px;
+    height: 160px;
+    pointer-events: none; /* Deixa clicar através dela */
+    z-index: 10;
+}
+
+.mascot-img {
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(5px 5px 8px rgba(0,0,0,0.3));
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Classe para animar a capivara pulando quando acerta */
+.mascot-jump {
+    transform: translateY(-20px) scale(1.1);
+}
+
+/* =========================================
+   7. Navegação Inferior (Menu)
+   ========================================= */
+.bottom-nav {
+    background: #FFFFFF;
+    padding: 10px 0;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-top: 1px solid #eeeeee;
+    z-index: 15; /* Acima do mascote se precisar */
+    box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: all 0.3s;
+    width: 25%; /* 4 itens = 25% cada */
+}
+
+.nav-item:hover, .nav-item.active {
+    opacity: 1;
+}
+
+.nav-item img {
+    width: 32px;
+    height: 32px;
+    margin-bottom: 4px;
+    transition: transform 0.2s;
+}
+
+.nav-item.active img {
+    transform: translateY(-5px); /* Ícone sobe quando ativo */
+}
+
+.nav-item small {
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: #555;
+}
+
+/* =========================================
+   8. Telas de Login/Dashboard (Genéricas)
+   ========================================= */
+.auth-box {
+    width: 85%;
+    background: white;
+    padding: 20px;
+    border-radius: 20px;
+    text-align: center;
+}
+
+.btn-primary {
+    background-color: #2E7D32;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 25px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #1B5E20; /* Sombra sólida */
+    transition: transform 0.1s, box-shadow 0.1s;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.btn-primary:active {
+    transform: translateY(4px);
+    box-shadow: 0 0 0 #1B5E20;
+}
+
+input.form-control {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 2px solid #ddd;
+    border-radius: 15px;
+    font-family: inherit;
+}
+
+/* =========================================
+   9. Animações e Utilitários
+   ========================================= */
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-8px); }
+    50% { transform: translateX(8px); }
+    75% { transform: translateX(-8px); }
+    100% { transform: translateX(0); }
+}
+
+/* Feedback Visual (Adicionado via JS) */
+.correct {
+    border-color: #4CAF50 !important;
+    color: #2E7D32 !important;
+    background-color: #E8F5E9 !important;
+}
+
+.wrong {
+    border-color: #F44336 !important;
+    color: #C62828 !important;
+    background-color: #FFEBEE !important;
+    animation: shake 0.4s ease-in-out;
+}
