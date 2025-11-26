@@ -10,6 +10,9 @@ ini_set('session.gc_maxlifetime', 86400);
 
 session_start();
 
+// Carrega a conexão com o banco de dados para disponibilizar $pdo globalmente
+require_once __DIR__ . '/config/database.php';
+
 // Define a página padrão como 'home' (que levará ao jogo)
 $page = isset($_GET['page']) ? $_GET['page'] : 'home';
 
