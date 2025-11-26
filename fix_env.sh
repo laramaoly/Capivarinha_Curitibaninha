@@ -8,36 +8,44 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Aguardar MySQL ficar pronto
 echo "Aguardando MySQL..."
-# Se o serviço MySQL não estiver ativo, tenta iniciar (útil em containers/resets)
-if ! sudo service mysql status >/dev/null 2>&1; then
-  echo "MySQL não está ativo. Iniciando serviço MySQL..."
-  sudo service mysql start || true
-  sleep 1
-fi
-for i in {1..30}; do
-  if sudo mysql -e "SELECT 1" >/dev/null 2>&1; then
-    echo "✅ MySQL pronto!"
-    break
-  fi
-  if [ $i -eq 30 ]; then
-    echo "❌ MySQL não respondeu após 30 segundos"
-    exit 1
-  fi
-  sleep 1
-done
 
-# Configurar banco de dados
-echo "Configurando banco de dados..."
-sudo mysql -e "DROP DATABASE IF EXISTS capityper; CREATE DATABASE capityper CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci; CREATE USER IF NOT EXISTS 'admin'@'%' IDENTIFIED BY 'admin'; GRANT ALL PRIVILEGES ON capityper.* TO 'admin'@'%' WITH GRANT OPTION; FLUSH PRIVILEGES;"
-
-# Importar schema
-sudo mysql -u admin -padmin capityper < "$SCRIPT_DIR/sql/database_setup.sql"
-
-# Atualizar dicas no banco (garante que a coluna exista e que as dicas estejam preenchidas)
-if command -v php8.3 >/dev/null 2>&1; then
-  php8.3 "$SCRIPT_DIR/update_db_hints.php" > /dev/null 2>&1 || true
+# Verificar se MySQL/MariaDB está instalado
+if ! command -v mysql >/dev/null 2>&1; then
+  echo "⚠️  MySQL não está instalado. Configure manualmente ou use Docker."
+  echo "Continuando com criação de arquivo .env..."
 else
-  php "$SCRIPT_DIR/update_db_hints.php" > /dev/null 2>&1 || true
+  # Se o serviço MySQL não estiver ativo, tenta iniciar (útil em containers/resets)
+  if ! sudo mysqld_safe --daemonize >/dev/null 2>&1; then
+    echo "⚠️  Não foi possível iniciar MySQL, continuando..."
+  fi
+  sleep 2
+
+  for i in {1..30}; do
+    if sudo mysql -e "SELECT 1" >/dev/null 2>&1; then
+      echo "✅ MySQL pronto!"
+      
+      # Configurar banco de dados
+      echo "Configurando banco de dados..."
+      sudo mysql -e "DROP DATABASE IF EXISTS capityper; CREATE DATABASE capityper CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci; CREATE USER IF NOT EXISTS 'admin'@'%' IDENTIFIED BY 'admin'; GRANT ALL PRIVILEGES ON capityper.* TO 'admin'@'%' WITH GRANT OPTION; FLUSH PRIVILEGES;"
+
+      # Importar schema
+      sudo mysql -u admin -padmin capityper < "$SCRIPT_DIR/sql/database_setup.sql"
+
+      # Atualizar dicas no banco (garante que a coluna exista e que as dicas estejam preenchidas)
+      if command -v php8.3 >/dev/null 2>&1; then
+        php8.3 "$SCRIPT_DIR/update_db_hints.php" > /dev/null 2>&1 || true
+      else
+        php "$SCRIPT_DIR/update_db_hints.php" > /dev/null 2>&1 || true
+      fi
+      
+      break
+    fi
+    if [ $i -eq 30 ]; then
+      echo "❌ MySQL não respondeu após 30 segundos"
+      exit 1
+    fi
+    sleep 1
+  done
 fi
 
 # Criar arquivo .env

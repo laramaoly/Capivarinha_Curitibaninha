@@ -38,9 +38,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($resultado === true) {
             $msg = "Cadastro feito com sucesso! Agora é só logar.";
             $msgType = "success";
-            // Opcional: Redirecionar após alguns segundos ou limpar o form
         } else {
-            // Exibe o erro retornado pelo Controller (ex: email já existe)
+            // Exibe o erro retornado pelo Controller
             $msg = $resultado;
             $msgType = "error";
         }
@@ -78,7 +77,8 @@ require 'includes/header.php';
                 <?php endif; ?>
             <?php endif; ?>
 
-            <!-- Formulário (Oculta se tiver sucesso para forçar login, opcional) -->
+            <!-- Formulário (Oculta se tiver sucesso para forçar login) -->
+            <!-- AQUI ESTAVA O ERRO: Usamos sintaxe alternativa (:) para o HTML ficar limpo -->
             <?php if ($msgType !== 'success'): ?>
             <form method="POST" action="index.php?page=register">
                 
@@ -106,7 +106,7 @@ require 'includes/header.php';
                     CADASTRAR
                 </button>
             </form>
-            <?php endif; ?>
+            <?php endif; ?> <!-- Este endif fecha o if da linha 82 -->
 
             <div style="margin-top: 15px; font-size: 0.85rem; padding-top: 10px; border-top: 1px solid #eee;">
                 Já tem cadastro? <br>

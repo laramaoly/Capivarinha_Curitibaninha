@@ -26,6 +26,17 @@ class AuthController {
             $stmt = $this->pdo->prepare("SELECT * FROM usuarios WHERE email = ?");
             $stmt->execute([$email]);
             $user = $stmt->fetch();
+            // Bloqueio por tentativas: se houver muitas tentativas falhas recentes, bloquear
+            $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+            $threshold = 5; // tentativas
+            $windowMinutes = 15; // janela em minutos
+            $cutoff = date('Y-m-d H:i:s', strtotime("-{$windowMinutes} minutes"));
+            $stmtAttempts = $this->pdo->prepare("SELECT COUNT(*) as cnt FROM login_attempts WHERE (email = ? OR ip = ?) AND sucesso = 0 AND tentativa_em > ?");
+            $stmtAttempts->execute([$email, $ip, $cutoff]);
+            $cnt = $stmtAttempts->fetchColumn();
+            if ($cnt !== false && $cnt >= $threshold) {
+                return false; // bloqueado temporariamente
+            }
 
             // Verifica se o utilizador existe e se a senha bate com o hash
             if ($user && password_verify($senha, $user['senha'])) {
@@ -33,14 +44,23 @@ class AuthController {
                 if (session_status() === PHP_SESSION_NONE) {
                     session_start();
                 }
-                
+                // SEGURANÇA: Previne Session Fixation regenerando o ID após login
+                session_regenerate_id(true);
+
                 // Salva dados essenciais na sessão
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['user_nome'] = $user['nome'];
                 $_SESSION['user_email'] = $user['email'];
-                
+
+                // Registrar tentativa de login bem-sucedida
+                $stmtLog = $this->pdo->prepare("INSERT INTO login_attempts (email, ip, sucesso) VALUES (?, ?, 1)");
+                $stmtLog->execute([$email, $ip]);
+
                 return true;
             }
+            // Registrar tentativa falha
+            $stmtLog = $this->pdo->prepare("INSERT INTO login_attempts (email, ip, sucesso) VALUES (?, ?, 0)");
+            $stmtLog->execute([$email, $ip]);
             return false;
         } catch (PDOException $e) {
             // Em produção, logar o erro em arquivo
@@ -65,10 +85,15 @@ class AuthController {
                 return "Eita! Esse e-mail já está sendo usado por outro piá.";
             }
 
-            // 2. Cria o hash seguro da senha
+            // 2. Política de senha: mínimo 8 caracteres, ao menos letra e número
+            if (strlen($senha) < 8 || !preg_match('/[A-Za-z]/', $senha) || !preg_match('/[0-9]/', $senha)) {
+                return "A senha deve ter ao menos 8 caracteres e incluir letras e números.";
+            }
+
+            // 3. Cria o hash seguro da senha
             $hash = password_hash($senha, PASSWORD_DEFAULT);
 
-            // 3. Insere no banco
+            // 4. Insere no banco
             $stmt = $this->pdo->prepare("INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, ?)");
             $result = $stmt->execute([$nome, $email, $hash]);
 

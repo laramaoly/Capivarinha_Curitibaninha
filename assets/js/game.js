@@ -236,7 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 600);
     }
 
-    // Validação em Tempo Real (Input)
+    // Validação em Tempo Real (Input) com Feedback Visual Melhorado
     inputField.addEventListener('input', () => {
         if (!gameActive) return;
 
@@ -245,19 +245,32 @@ document.addEventListener('DOMContentLoaded', () => {
         const targetWord = (typeof currentWordObj === 'object' && currentWordObj.termo) ? currentWordObj.termo : currentWordObj;
         const target = normalize(targetWord);
 
-        // Feedback visual instantâneo de erro
-        if (!target.startsWith(typed)) {
-            mascot.src = IMG_SAD;
-            inputField.classList.add('wrong');
-        } else {
+        // Feedback visual instantâneo com cores dinâmicas
+        if (typed.length === 0) {
+            // Campo vazio - estado neutro
+            inputField.style.borderColor = "#CCC";
+            inputField.style.backgroundColor = "#FFF";
             mascot.src = IMG_HAPPY;
             inputField.classList.remove('wrong');
+        } else if (target.startsWith(typed)) {
+            // Início da palavra está correto - verde (UX positiva)
+            inputField.style.borderColor = "#4CAF50";
+            inputField.style.backgroundColor = "#F1F8F6";
+            mascot.src = IMG_HAPPY;
+            inputField.classList.remove('wrong');
+        } else {
+            // Letra errada - vermelho (UX negativa)
+            inputField.style.borderColor = "#F44336";
+            inputField.style.backgroundColor = "#FFF3F3";
+            mascot.src = IMG_SAD;
+            inputField.classList.add('wrong');
         }
 
         // Verifica se completou a palavra
         if (typed === target) {
             handleSuccess();
         }
+
     });
 
     // Função auxiliar de UI

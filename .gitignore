@@ -19,6 +19,40 @@ Dependências (caso venhas a usar Composer ou NPM no futuro)
 
 Ficheiros de Configuração com Senhas (IMPORTANTE!)
 
+# Arquivos de Sistema
+.DS_Store
+.env.local
+*.swp
+*.swo
+*~
+
+# Configuração Sensível - NUNCA COMITAR
+.env
+.env.production
+config/database.local.php
+
+# Logs e Banco de Dados
+logs/
+data/*.db
+data/*.sqlite
+*.log
+
+# Cache de Sessão
+sessions/
+tmp/
+
+# Arquivos de Teste/Debug - NUNCA COMITAR
+debug.php
+test.php
+*.test.php
+.phpunit.result.cache
+
+# Backup
+*.bak
+*.backup
+*~
+
+
 O Git não deve rastrear o ficheiro real com as tuas senhas do banco
 
 config/database.php

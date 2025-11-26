@@ -11,25 +11,6 @@ if (isset($_SESSION['user_id'])) {
     exit;
 }
 
-require_once 'controllers/AuthController.php';
-
-$auth = new AuthController($pdo);
-$erro = '';
-
-// Processamento do Formulário
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = trim($_POST['email']);
-    $senha = trim($_POST['senha']);
-
-    if ($auth->login($email, $senha)) {
-        // Login sucesso: redireciona para o jogo
-        header("Location: index.php?page=game");
-        exit;
-    } else {
-        $erro = "Eita! E-mail ou senha errados, piá.";
-    }
-}
-
 require 'includes/header.php';
 ?>
 
@@ -48,11 +29,12 @@ require 'includes/header.php';
             
             <?php if ($erro): ?>
                 <div style="background-color: #FFEBEE; color: #C62828; padding: 10px; border-radius: 10px; margin-bottom: 15px; font-size: 0.9rem; border: 1px solid #FFCDD2;">
-                    <?php echo $erro; ?>
+                    <?php echo htmlspecialchars($erro); ?>
                 </div>
             <?php endif; ?>
 
             <form method="POST" action="index.php?page=login">
+                <?php echo csrfInput(); ?>
                 <div style="text-align: left;">
                     <label style="font-weight: bold; color: #444; font-size: 0.9rem;">Seu E-mail:</label>
                     <input type="email" name="email" class="form-control" placeholder="exemplo@ufpr.br" required autofocus>

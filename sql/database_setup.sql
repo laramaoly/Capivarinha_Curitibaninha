@@ -67,7 +67,7 @@ INSERT INTO termos_jogo (termo, dica, dificuldade) VALUES
 ('Guria', 'Menina ou jovem mulher', 'facil'), 
 ('Capi', 'Diminutivo de capivara', 'facil'), 
 ('Chima', 'Gíria local para chimarrão', 'facil'), 
-('Tube', 'Onibus de linha', 'facil'), 
+('Tubo', 'Onibus de linha', 'facil'), 
 ('Véi', 'Forma coloquial de chamar alguém (véio)', 'facil'), 
 ('Gela', 'Forma de dizer geladeira/gelo', 'facil'),
 ('Busão', 'Ônibus', 'facil'),
