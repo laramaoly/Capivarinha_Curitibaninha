@@ -92,3 +92,13 @@ INSERT INTO termos_jogo (termo, dica, dificuldade) VALUES
 ('Petit Pavê', 'Trocadilho culinário ou nome inventado', 'dificil'),
 ('Deus me livre', 'Expressão de surpresa/afirmação', 'dificil'),
 ('Quem me dera', 'Expressão de desejo irreal', 'dificil');
+
+-- 8. Tabela de Tentativas de Login (Segurança)
+-- CORREÇÃO: Adicionando tabela que faltava para o AuthController funcionar
+CREATE TABLE login_attempts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(100),
+    ip VARCHAR(45),
+    sucesso TINYINT(1),
+    tentativa_em DATETIME DEFAULT CURRENT_TIMESTAMP
+);
