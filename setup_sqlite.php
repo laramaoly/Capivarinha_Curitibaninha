@@ -1,6 +1,6 @@
 <?php
 /**
- * Script para inicializar o banco SQLite com o schema
+ * Script para inicializar o banco SQLite com o schema corrigido
  */
 
 $db_dir = __DIR__ . '/data';
@@ -10,15 +10,12 @@ if (!is_dir($db_dir)) {
 
 $sqlite_path = $db_dir . '/capityper.db';
 
-// Remover banco anterior se existir (para reset)
-// unlink($sqlite_path);
-
 try {
     $pdo = new PDO("sqlite:$sqlite_path");
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $pdo->exec("PRAGMA foreign_keys = ON");
     
-    // Criar tabelas
+    // 1. Tabela de Usuários
     $pdo->exec("
     CREATE TABLE IF NOT EXISTS usuarios (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -29,6 +26,7 @@ try {
     )
     ");
     
+    // 2. Tabela de Ligas
     $pdo->exec("
     CREATE TABLE IF NOT EXISTS ligas (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -40,6 +38,7 @@ try {
     )
     ");
     
+    // 3. Membros da Liga
     $pdo->exec("
     CREATE TABLE IF NOT EXISTS liga_membros (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -52,6 +51,7 @@ try {
     )
     ");
     
+    // 4. Palavras do Jogo
     $pdo->exec("
     CREATE TABLE IF NOT EXISTS palavras (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -61,9 +61,7 @@ try {
     )
     ");
     
-    $pdo->exec("
-
-    // Tabela para tentativas de login (bloqueio por força bruta)
+    // 5. Tentativas de Login (Segurança)
     $pdo->exec("
     CREATE TABLE IF NOT EXISTS login_attempts (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -74,23 +72,23 @@ try {
     )
     ");
 
-    // Índices para melhorar performance nas queries de ranking e buscas
-    $pdo->exec("CREATE INDEX IF NOT EXISTS idx_scores_usuario ON scores(usuario_id)");
-    $pdo->exec("CREATE INDEX IF NOT EXISTS idx_scores_data ON scores(data_jogo)");
-    $pdo->exec("CREATE INDEX IF NOT EXISTS idx_palavras_categoria ON palavras(categoria)");
-    CREATE TABLE IF NOT EXISTS scores (
+    // 6. Tabela de Partidas (IMPORTANTE: Nome 'partidas' para compatibilidade)
+    $pdo->exec("
+    CREATE TABLE IF NOT EXISTS partidas (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         usuario_id INTEGER,
-        liga_id INTEGER,
+        pontuacao INTEGER DEFAULT 0,
         palavras_acertadas INTEGER DEFAULT 0,
-        palavras_erradas INTEGER DEFAULT 0,
-        tempo_gasto INTEGER,
-        data_jogo DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
-        FOREIGN KEY (liga_id) REFERENCES ligas(id) ON DELETE CASCADE
+        data_partida DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
     )
     ");
     
+    // 7. Índices para Performance
+    $pdo->exec("CREATE INDEX IF NOT EXISTS idx_partidas_usuario ON partidas(usuario_id)");
+    $pdo->exec("CREATE INDEX IF NOT EXISTS idx_partidas_data ON partidas(data_partida)");
+    $pdo->exec("CREATE INDEX IF NOT EXISTS idx_palavras_categoria ON palavras(categoria)");
+
     echo "✅ Banco de dados SQLite inicializado com sucesso!\n";
     echo "Caminho: $sqlite_path\n";
     

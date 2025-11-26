@@ -61,12 +61,12 @@ class RankingController {
     public function getGlobalRanking($limit = 10) {
         try {
             // Soma a pontuação de todas as partidas agrupadas por utilizador
-                $sql = "SELECT u.id AS user_id, u.nome, SUM(p.pontuacao) as total_pontos, COUNT(p.id) as partidas_jogadas
-                    FROM partidas p
-                    JOIN usuarios u ON p.usuario_id = u.id
-                    GROUP BY u.id
-                    ORDER BY total_pontos DESC
-                    LIMIT :limit";
+                $sql = "SELECT u.nome, SUM(p.pontuacao) as total_pontos
+                FROM partidas p
+                JOIN usuarios u ON p.usuario_id = u.id
+                GROUP BY u.id
+                ORDER BY total_pontos DESC
+                LIMIT :limit";
             
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);

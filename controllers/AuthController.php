@@ -103,6 +103,8 @@ class AuthController {
                 return "Erro ao salvar no banco. Tente novamente.";
             }
         } catch (PDOException $e) {
+            // Log do erro real para debug
+            error_log("Erro no registo: " . $e->getMessage());
             return "Erro técnico: " . $e->getMessage();
         }
     }

@@ -1,89 +1,51 @@
 <?php
-/**
- * Capivarinha_Curitibaninha - API de Salvar Pontuação
- * Recebe o resultado da partida e salva no histórico do usuário.
- * Autor: Maoly Lara Serrano
- */
-
 session_start();
 header('Content-Type: application/json');
 require_once __DIR__ . '/../config/database.php';
 
-
-// 1. Segurança: Verifica se o usuário está logado
+// 1. Apenas usuários logados
 if (!isset($_SESSION['user_id'])) {
-    http_response_code(401); // Unauthorized
-    echo json_encode(['status' => 'error', 'message' => 'Usuário não autenticado.']);
+    http_response_code(401);
+    echo json_encode(['status' => 'error', 'message' => 'Não autorizado']);
     exit;
 }
 
-// 1.1 Verifica CSRF: aceita token no corpo JSON ou header `X-CSRF-Token`
-$csrf_token = null;
-$json_input = file_get_contents('php://input');
-$data = json_decode($json_input, true);
-$csrf_token = $data['csrf_token'] ?? ($_SERVER['HTTP_X_CSRF_TOKEN'] ?? null);
-if (!validateCsrfToken($csrf_token)) {
-    http_response_code(403);
-    echo json_encode(['status' => 'error', 'message' => 'Token CSRF inválido.']);
+// 2. Receber e Sanitar Dados
+$input = json_decode(file_get_contents('php://input'), true);
+$pontos = filter_var($input['pontos'] ?? 0, FILTER_VALIDATE_INT);
+$acertos = filter_var($input['acertos'] ?? 0, FILTER_VALIDATE_INT);
+
+// 3. REGRA DE NEGÓCIO (Anti-Cheat)
+$maximoPossivel = ($acertos * 15) + 20;
+
+if ($pontos > $maximoPossivel) {
+    // Logar tentativa de trapaça
+    error_log("CHEAT DETECTED: User {$_SESSION['user_id']} tentou enviar $pontos pts com $acertos acertos.");
+    
+    http_response_code(400);
+    echo json_encode(['status' => 'error', 'message' => 'Pontuação inconsistente.']);
     exit;
 }
 
-// 2. Recebe os dados crus da requisição (JSON)
-$json_input = file_get_contents('php://input');
-$data = json_decode($json_input, true);
+// 4. Salvar no Banco
+try {
+    $pdo = getDatabaseConnection();
+    
+    // CORREÇÃO: Data gerada pelo PHP para compatibilidade total (MySQL e SQLite)
+    $agora = date('Y-m-d H:i:s'); 
+    
+    // Nota: Certifique-se que sua tabela se chama 'partidas'. 
+    // Se o setup do SQLite criou como 'scores', mude abaixo para 'scores'.
+    $stmt = $pdo->prepare("INSERT INTO partidas (usuario_id, pontuacao, palavras_acertadas, data_partida) VALUES (?, ?, ?, ?)");
+    $stmt->execute([$_SESSION['user_id'], $pontos, $acertos, $agora]);
 
-// 3. Validação dos dados recebidos
-if (isset($data['pontos']) && isset($data['acertos'])) {
-    // Sanitização básica (garante que são números inteiros)
-    $pontos = filter_var($data['pontos'], FILTER_VALIDATE_INT);
-    $acertos = filter_var($data['acertos'], FILTER_VALIDATE_INT);
-    $user_id = (int)$_SESSION['user_id'];
-
-    // Validações de negócio básicas para evitar trapaças óbvias
-    if ($pontos === false || $acertos === false || $pontos < 0 || $pontos > 1000000 || $acertos < 0 || $acertos > 10000) {
-        http_response_code(400);
-        echo json_encode(['status' => 'error', 'message' => 'Dados de pontuação inválidos.']);
-        exit;
-    }
-
-    try {
-        // 4. Insere no banco de dados (Tabela 'scores' / 'partidas')
-        // Usamos timestamp gerado pelo PHP para compatibilidade entre MySQL e SQLite
-        $now = date('Y-m-d H:i:s');
-
-        // Tenta usar tabela 'scores' se existir, senão 'partidas' (compatibilidade)
-        $table = 'scores';
-        $check = $pdo->prepare("SELECT name FROM sqlite_master WHERE type='table' AND name = 'scores'");
-        $ok = false;
-        try {
-            $check->execute();
-            $ok = (bool)$check->fetch();
-        } catch (Exception $e) {
-            // Ignore, fallback para tentar INSERT direto
-        }
-
-        if ($ok) {
-            $stmt = $pdo->prepare("INSERT INTO scores (usuario_id, palavras_acertadas, palavras_erradas, tempo_gasto, data_jogo) VALUES (?, ?, ?, ?, ?)");
-            // tempo_gasto não vem aqui — usamos NULL
-            $stmt->execute([$user_id, $acertos, 0, null, $now]);
-        } else {
-            // tabela antigas / compatibilidade
-            $stmt = $pdo->prepare("INSERT INTO partidas (usuario_id, pontuacao, palavras_acertadas, data_partida) VALUES (?, ?, ?, ?)");
-            $stmt->execute([$user_id, $pontos, $acertos, $now]);
-        }
-
-        echo json_encode(['status' => 'success', 'message' => 'Pontuação salva com sucesso.']);
-
-    } catch (PDOException $e) {
-        // Erro de banco de dados: logar e retornar mensagem genérica
-        error_log("[save_score] DB error: " . $e->getMessage() . "\n", 3, __DIR__ . '/../logs/db_errors.log');
-        http_response_code(500);
-        echo json_encode(['status' => 'error', 'message' => 'Erro interno ao salvar pontuação.']);
-    }
-
-} else {
-    // Dados inválidos ou incompletos
-    http_response_code(400); // Bad Request
-    echo json_encode(['status' => 'error', 'message' => 'Dados inválidos recebidos.']);
+    echo json_encode(['status' => 'success']);
+    
+} catch (PDOException $e) {
+    // Log do erro real
+    error_log("Erro ao salvar score: " . $e->getMessage());
+    
+    http_response_code(500);
+    echo json_encode(['status' => 'error', 'message' => 'Erro interno ao salvar.']);
 }
 ?>

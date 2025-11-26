@@ -34,7 +34,7 @@ require 'includes/header.php';
             <?php endif; ?>
 
             <form method="POST" action="index.php?page=login">
-                <?php echo csrfInput(); ?>
+                
                 <div style="text-align: left;">
                     <label style="font-weight: bold; color: #444; font-size: 0.9rem;">Seu E-mail:</label>
                     <input type="email" name="email" class="form-control" placeholder="exemplo@ufpr.br" required autofocus>

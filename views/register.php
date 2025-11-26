@@ -5,7 +5,8 @@
  * Autor: Maoly Lara Serrano
  */
 
-// Se já estiver logado, não precisa criar conta
+// views/register.php
+
 if (isset($_SESSION['user_id'])) {
     header("Location: index.php?page=game");
     exit;
@@ -13,7 +14,7 @@ if (isset($_SESSION['user_id'])) {
 
 require 'includes/header.php';
 
-// Inicializa variáveis se não estiverem definidas (boas práticas)
+// Garante que as variáveis existem para evitar avisos
 $erro = $erro ?? '';
 $sucesso = $sucesso ?? '';
 ?>
@@ -21,23 +22,21 @@ $sucesso = $sucesso ?? '';
 <div class="background-container">
     <main class="app-frame" style="justify-content: center; align-items: center; background: radial-gradient(circle, #ffffff 0%, #E1F5FE 100%);">
         
-        <!-- Cabeçalho Simples -->
         <div style="text-align: center; margin-bottom: 15px;">
             <img src="assets/img/icons/Gralha_Azul.png" style="width: 60px;" alt="Gralha Azul">
             <h2 style="color: #0277BD; margin-top: 5px; font-size: 1.5rem;">Criar Conta</h2>
             <p style="color: #666; font-size: 0.9rem;">Venha fazer parte da piazada!</p>
         </div>
 
-        <!-- Caixa de Cadastro -->
         <div class="auth-box" style="max-height: 75vh; overflow-y: auto;">
             
-            <?php if ($erro): ?>
+            <?php if (!empty($erro)): ?>
                 <div style="background-color: #FFEBEE; color: #C62828; padding: 10px; border-radius: 10px; margin-bottom: 15px; font-size: 0.9rem; border: 1px solid #FFCDD2;">
                     <?php echo htmlspecialchars($erro); ?>
                 </div>
             <?php endif; ?>
             
-            <?php if ($sucesso): ?>
+            <?php if (!empty($sucesso)): ?>
                 <div style="background-color: #E8F5E9; color: #2E7D32; padding: 10px; border-radius: 10px; margin-bottom: 15px; font-size: 0.9rem; border: 1px solid #4CAF50; font-weight: bold;">
                     <?php echo htmlspecialchars($sucesso); ?>
                 </div>
@@ -45,11 +44,8 @@ $sucesso = $sucesso ?? '';
                     <a href="index.php?page=login" class="btn-primary" style="text-decoration: none; display: inline-block; background-color: #2E7D32;">Ir para Login</a>
                 </div>
             <?php else: ?>
-                <!-- Formulário de Cadastro -->
+                
                 <form method="POST" action="index.php?page=register">
-                    <!-- Token CSRF para segurança -->
-                    <?php if (function_exists('csrfInput')) echo csrfInput(); ?>
-                    
                     <div style="text-align: left;">
                         <label style="font-weight: bold; color: #444; font-size: 0.85rem;">Nome ou Apelido:</label>
                         <input type="text" name="nome" class="form-control" placeholder="Ex: Zé do Pinhão" required value="<?php echo isset($_POST['nome']) ? htmlspecialchars($_POST['nome']) : ''; ?>">
@@ -62,7 +58,7 @@ $sucesso = $sucesso ?? '';
 
                     <div style="text-align: left; margin-top: 10px;">
                         <label style="font-weight: bold; color: #444; font-size: 0.85rem;">Senha:</label>
-                        <input type="password" name="senha" class="form-control" placeholder="Mínimo 6 caracteres" required>
+                        <input type="password" name="senha" class="form-control" placeholder="Mínimo 8 caracteres e 1 letra" required>
                     </div>
 
                     <div style="text-align: left; margin-top: 10px;">
