@@ -8,6 +8,12 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Aguardar MySQL ficar pronto
 echo "Aguardando MySQL..."
+# Se o serviço MySQL não estiver ativo, tenta iniciar (útil em containers/resets)
+if ! sudo service mysql status >/dev/null 2>&1; then
+  echo "MySQL não está ativo. Iniciando serviço MySQL..."
+  sudo service mysql start || true
+  sleep 1
+fi
 for i in {1..30}; do
   if sudo mysql -e "SELECT 1" >/dev/null 2>&1; then
     echo "✅ MySQL pronto!"

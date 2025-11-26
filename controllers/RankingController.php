@@ -5,8 +5,6 @@
  * Autor: Maoly Lara Serrano
  */
 
-require_once __DIR__ . '/../config/database.php';
-
 class RankingController {
     private $pdo;
 
@@ -21,7 +19,7 @@ class RankingController {
     public function getGlobalRanking($limit = 10) {
         try {
             // Soma a pontuação de todas as partidas agrupadas por utilizador
-            $sql = "SELECT u.nome, SUM(p.pontuacao) as total_pontos, COUNT(p.id) as partidas_jogadas
+                $sql = "SELECT u.id AS user_id, u.nome, SUM(p.pontuacao) as total_pontos, COUNT(p.id) as partidas_jogadas
                     FROM partidas p
                     JOIN usuarios u ON p.usuario_id = u.id
                     GROUP BY u.id
@@ -44,7 +42,7 @@ class RankingController {
      */
     public function getGlobalRankingWeekly($limit = 10) {
         try {
-            $sql = "SELECT u.nome, SUM(p.pontuacao) as total_pontos
+                $sql = "SELECT u.id AS user_id, u.nome, SUM(p.pontuacao) as total_pontos
                     FROM partidas p
                     JOIN usuarios u ON p.usuario_id = u.id
                     WHERE YEARWEEK(p.data_partida, 1) = YEARWEEK(CURDATE(), 1)
@@ -68,7 +66,7 @@ class RankingController {
      */
     public function getLeagueRanking($liga_id, $limit = 10) {
         try {
-            $sql = "SELECT u.nome, SUM(p.pontuacao) as total_pontos
+                $sql = "SELECT u.id AS user_id, u.nome, SUM(p.pontuacao) as total_pontos
                     FROM partidas p
                     JOIN usuarios u ON p.usuario_id = u.id
                     JOIN liga_membros lm ON u.id = lm.usuario_id
@@ -95,7 +93,7 @@ class RankingController {
      */
     public function getLeagueRankingWeekly($liga_id, $limit = 10) {
         try {
-            $sql = "SELECT u.nome, SUM(p.pontuacao) as total_pontos
+                $sql = "SELECT u.id AS user_id, u.nome, SUM(p.pontuacao) as total_pontos
                     FROM partidas p
                     JOIN usuarios u ON p.usuario_id = u.id
                     JOIN liga_membros lm ON u.id = lm.usuario_id
@@ -122,7 +120,7 @@ class RankingController {
      */
     public function getUserHistory($usuario_id) {
         try {
-            $sql = "SELECT p.pontuacao, p.palavras_acertadas, p.data_partida,
+                 $sql = "SELECT p.pontuacao, p.palavras_acertadas, p.data_partida,
                            DATE_FORMAT(p.data_partida, '%d/%m/%Y %H:%i') as data_formatada
                     FROM partidas p
                     WHERE p.usuario_id = :usuario_id
@@ -147,7 +145,7 @@ class RankingController {
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute([$usuario_id]);
             $result = $stmt->fetch();
-            return $result['total'] ? $result['total'] : 0;
+            return $result && $result['total'] ? (int)$result['total'] : 0;
         } catch (PDOException $e) {
             return 0;
         }
