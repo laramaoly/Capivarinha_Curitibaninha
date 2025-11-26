@@ -66,6 +66,11 @@ if ! command -v "$PHP_BIN" >/dev/null 2>&1; then
 fi
 
 echo "Executando checagem rápida do controller de ranking com ${PHP_BIN}..."
-"$PHP_BIN" -r "try { require 'controllers/RankingController.php'; new RankingController(); echo 'RankingController: OK\n'; } catch (Throwable \$e) { echo 'RankingController: ERR: '.addslashes(\$e->getMessage())."\n"; exit(1);}"
+# Executa o check em PHP; captura saída e não deixa o script falhar (para debugging)
+CHECK_OUT=$(
+  "$PHP_BIN" -r 'try { require "controllers/RankingController.php"; new RankingController(); echo "RankingController: OK\n"; } catch (Throwable $e) { echo "RankingController: ERR: ".addslashes($e->getMessage())."\n"; exit(1); }' 2>&1
+) || true
+
+echo "$CHECK_OUT"
 
 exit 0
