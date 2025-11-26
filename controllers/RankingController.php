@@ -8,8 +8,50 @@
 class RankingController {
     private $pdo;
 
-    public function __construct($pdo) {
-        $this->pdo = $pdo;
+    /**
+     * Constructor accepts an optional PDO instance. If none is provided,
+     * it will try to create one using the application's database config.
+     */
+    public function __construct($pdo = null) {
+        if ($pdo instanceof PDO) {
+            $this->pdo = $pdo;
+            return;
+        }
+
+        // Tenta carregar a configuração padrão
+        $configPath = __DIR__ . '/../config/database.php';
+        if (file_exists($configPath)) {
+            require_once $configPath;
+            if (isset($pdo) && $pdo instanceof PDO) {
+                $this->pdo = $pdo;
+            } elseif (isset($GLOBALS['pdo']) && $GLOBALS['pdo'] instanceof PDO) {
+                $this->pdo = $GLOBALS['pdo'];
+            } elseif (isset($pdo) && !$pdo) {
+                // nothing
+            } else {
+                // If `database.php` sets `$pdo` in the local scope, grab it.
+                if (isset($pdo) && $pdo instanceof PDO) {
+                    $this->pdo = $pdo;
+                } elseif (isset($GLOBALS['pdo']) && $GLOBALS['pdo'] instanceof PDO) {
+                    $this->pdo = $GLOBALS['pdo'];
+                }
+            }
+        }
+
+        // Se ainda não temos um PDO válido, tenta buscar $pdo criado por include anterior
+        if (!($this->pdo instanceof PDO) && isset($pdo) && $pdo instanceof PDO) {
+            $this->pdo = $pdo;
+        }
+
+        // Último recurso: verifica variável global $pdo
+        if (!($this->pdo instanceof PDO) && isset($GLOBALS['pdo']) && $GLOBALS['pdo'] instanceof PDO) {
+            $this->pdo = $GLOBALS['pdo'];
+        }
+
+        // Se não encontrou, lança exceção clara para facilitar debugging
+        if (!($this->pdo instanceof PDO)) {
+            throw new \RuntimeException('RankingController: PDO instance is not available. Ensure config/database.php is loaded or pass a PDO to the constructor.');
+        }
     }
 
     /**

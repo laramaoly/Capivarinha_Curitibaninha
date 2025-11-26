@@ -59,4 +59,13 @@ echo "✅ Pronto! Execute para iniciar o servidor:"
 echo "   php -S 0.0.0.0:8000"
 echo "   Acesse: http://127.0.0.1:8000"
 
+# Verificação final: tenta instanciar RankingController para detectar problemas de PDO/config
+PHP_BIN="php8.3"
+if ! command -v "$PHP_BIN" >/dev/null 2>&1; then
+  PHP_BIN="php"
+fi
+
+echo "Executando checagem rápida do controller de ranking com ${PHP_BIN}..."
+"$PHP_BIN" -r "try { require 'controllers/RankingController.php'; new RankingController(); echo 'RankingController: OK\n'; } catch (Throwable \$e) { echo 'RankingController: ERR: '.addslashes(\$e->getMessage())."\n"; exit(1);}"
+
 exit 0
